@@ -1,0 +1,99 @@
+﻿@model BookingApp.Models.BookingModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete guest</h1>
+
+<div>
+    
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.RoomNumber)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RoomNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ClientsName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ClientsName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Adress)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Adress)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal">
+            Delete Guest
+        </button>
+    </form>
+
+    <!-- Kontajner pre načítanie Partial View -->
+    <div id="modalContainer"></div>
+
+    <!-- JavaScript na načítanie Partial View a inicializáciu modálneho okna -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            // Načítanie Partial View do kontajnera pri kliknutí na tlačidlo
+            $('[data-toggle="modal"]').click(function () {
+                $.get('@Url.Action("DeleteModal", "Booking")', function (data) {
+                    $('#modalContainer').html(data);
+                    $('#deleteModal').modal('show');
+                });
+            });
+
+            // Zatvorenie modálneho okna pri kliknutí na tlačidlo Close
+            $(document).on('click', '.btn-secondary', function () {
+                $('#deleteModal').modal('hide');
+            });
+
+            // Odošle AJAX požiadavku pri kliknutí na tlačidlo Delete
+            $(document).on('click', '#deleteButton', function () {
+                $.ajax({
+                    // url: '@Url.Action("Delete", "Booking", Model.Id)',
+                    url: '/Booking/Delete/' + @Model.Id,
+                    type: 'POST',
+                    data: {
+                        id: @Model.Id // Príklad odoslania ID z modelu
+                        // clientsName: @Model.ClientsName
+                            },
+                    success: function (result) {
+                        // Akcia po úspešnom zavolaní metódy
+                        $('#deleteModal').modal('hide');
+                        // Môžeš pridať ďalšie akcie, napr. obnovenie časti stránky
+                        window.location.href = '@Url.Action("Index", "Booking")';
+                    },
+                    error: function (xhr, status, error) {
+                        // Akcia po neúspešnom zavolaní metódy
+                        alert('Error: ' + error);
+                    }
+                });
+            });
+        });
+    </script>
+
+</div>
